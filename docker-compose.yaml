@@ -1,0 +1,42 @@
+version: '3'
+name: chat_with_pdf
+services:
+  backend:
+    container_name: 'chat_with_pdf'
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 8123:8000
+    environment:
+      - OPENAI_API_KEY=<YOUR_OPEN_AI_KEY>
+      - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/chat_db  # Connection string for PostgreSQL
+    command: 'gunicorn -k uvicorn.workers.UvicornWorker -w 4 app.main:app --timeout 120 --bind 0.0.0.0:8000 --reload'
+    networks:
+      - doc-class
+    depends_on:
+      - db  # Ensures that the backend service starts after the db service
+
+  db:
+    image: ankane/pgvector:latest
+    container_name: 'chat_db'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chat_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount init.sql
+    networks:
+      - doc-class
+    ports:
+      - 5432:5432
+
+volumes:
+  pgdata:
+
+networks:
+  doc-class:
+    name: doc-class
