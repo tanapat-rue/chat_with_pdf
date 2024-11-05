@@ -23,6 +23,8 @@ This command will spin up two Docker containers:
 - **chat_db**: The PostgreSQL vector database that stores text embeddings for retrieval.  
 - **chat_with_pdf**: The backend service that processes PDF files, handles chat requests, and communicates with the language model.  
 
+**Note: please specify <OPENAI_API_KEY> in the docker-compose.yaml
+
 ## 3) How to Improve
 
 To enhance the functionality and efficiency of this application, consider the following improvements:
